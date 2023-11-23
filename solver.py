@@ -30,12 +30,14 @@ def print_board(grid):
 
 def find_empty(grid):
     """
-    Checks for empty spaces
+    Checks for empty space
     """
     for i, row in enumerate(grid):
         for j, val in enumerate(row):
             if val == 0:
                 return(i,j)
+    
+    return None
 
 def valid(grid, num, pos):
     """
@@ -60,3 +62,32 @@ def valid(grid, num, pos):
             if grid[i][j] == num and (i, j) != pos:
                 return False
     return True
+
+def solve(grid):
+    """
+    if there are empty spaces replace with num 1-10. Solve function calls itself(such recursion, such wow), if true and valid returns solved, else backtracks
+    """
+    find = find_empty(grid)
+    
+    #if there are no empty spaces game is solved
+    if not find:
+        return True
+    else:
+        row, col = find
+    
+    for i in range(1, 10):
+        if valid(grid, i, (row, col)):
+            grid[row][col] = i
+            
+            if solve(grid):
+                return True
+            
+            #reset value if unsolvable
+            grid[row][col] = 0
+            
+    return False
+
+print_board(board)
+solve(board)
+print('_________________')
+print_board(board)
