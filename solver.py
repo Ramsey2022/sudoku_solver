@@ -14,7 +14,7 @@ board = [
 def print_board(grid):
     for i in range(len(grid)):
         if i % 3 == 0 and i != 0:
-            print('- - - - - - - - - - - - -')
+            print('- - - - - - - - - - - -')
             
         for j in range(len(grid[0])):
             if j % 3 == 0 and j != 0:
@@ -25,4 +25,8 @@ def print_board(grid):
             else:
                     print(str(grid[i][j]) + " ", end="")
 
-print_board(board)
+def find_empty(grid):
+    for i, row in enumerate(grid):
+        for j, val in enumerate(row):
+            if val == 0:
+                return(i,j)
