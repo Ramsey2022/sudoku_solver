@@ -130,7 +130,7 @@ class Grid:
                 self.cubes[row][col].draw_change(self.win, True)
                 self.update_model()
                 pygame.display.update()
-                pygame.time.delay(100)
+                pygame.time.delay(10)
 
                 if self.solve_gui():
                     return True
@@ -140,7 +140,7 @@ class Grid:
                 self.update_model()
                 self.cubes[row][col].draw_change(self.win, False)
                 pygame.display.update()
-                pygame.time.delay(100)
+                pygame.time.delay(10)
 
         return False
 
@@ -169,11 +169,11 @@ class Cube:
             text = fnt.render(str(self.temp), 1, (128,128,128))
             win.blit(text, (x+5, y+5))
         elif not(self.value == 0):
-            text = fnt.render(str(self.value), 1, (0, 0, 0))
+            text = fnt.render(str(self.value), 1, (0,0,0))
             win.blit(text, (x + (gap/2 - text.get_width()/2), y + (gap/2 - text.get_height()/2)))
 
         if self.selected:
-            pygame.draw.rect(win, (255,0,0), (x,y, gap ,gap), 3)
+            pygame.draw.rect(win, (255, 211, 67), (x,y, gap ,gap), 3)
 
     def draw_change(self, win, g=True):
         fnt = pygame.font.SysFont("comicsans", 40)
@@ -182,12 +182,12 @@ class Cube:
         x = self.col * gap
         y = self.row * gap
 
-        pygame.draw.rect(win, (255, 255, 255), (x, y, gap, gap), 0)
+        pygame.draw.rect(win, (135,206,250), (x, y, gap, gap), 0)
 
-        text = fnt.render(str(self.value), 1, (0, 0, 0))
+        text = fnt.render(str(self.value), 1, (0,0,0))
         win.blit(text, (x + (gap / 2 - text.get_width() / 2), y + (gap / 2 - text.get_height() / 2)))
         if g:
-            pygame.draw.rect(win, (0, 255, 0), (x, y, gap, gap), 3)
+            pygame.draw.rect(win, (255, 211, 67), (x, y, gap, gap), 3)
         else:
             pygame.draw.rect(win, (255, 0, 0), (x, y, gap, gap), 3)
 
@@ -230,15 +230,18 @@ def valid(bo, num, pos):
     return True
 
 
-def redraw_window(win, board, time, strikes):
-    win.fill((255,255,255))
+def redraw_window(win, board, time, strikes, correct):
+    win.fill((135,206,250))
     # Draw time
     fnt = pygame.font.SysFont("comicsans", 40)
     text = fnt.render("Time: " + format_time(time), 1, (0,0,0))
     win.blit(text, (540 - 160, 560))
     # Draw Strikes
     text = fnt.render("X " * strikes, 1, (255, 0, 0))
+    # Draw correct answers
+    correct_answers = fnt.render("O " * correct, 1, (0, 128, 0))
     win.blit(text, (20, 560))
+    win.blit(correct_answers, (40, 560))
     # Draw grid and board
     board.draw()
 
@@ -259,6 +262,7 @@ def main():
     key = None
     run = True
     start = time.time()
+    correct = 0
     strikes = 0
     while run:
 
@@ -313,12 +317,15 @@ def main():
 
                 if event.key == pygame.K_RETURN:
                     i, j = board.selected
+                    correct = 0
+                    strikes = 0
                     if board.cubes[i][j].temp != 0:
                         if board.place(board.cubes[i][j].temp):
                             print("Success")
+                            correct = 1
                         else:
                             print("Wrong")
-                            strikes += 1
+                            strikes = 1
                         key = None
 
                         if board.is_finished():
@@ -334,7 +341,7 @@ def main():
         if board.selected and key != None:
             board.sketch(key)
 
-        redraw_window(win, board, play_time, strikes)
+        redraw_window(win, board, play_time, strikes, correct)
         pygame.display.update()
 
 
